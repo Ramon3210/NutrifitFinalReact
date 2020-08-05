@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 import { Container, Button } from "@material-ui/core";
-import logoNUTRICION from "../logoNUTRICION.png";
+import logoNUTRICION from "../assets/logoNUTRICION.png";
 
 class Content extends Component {
   state = {};

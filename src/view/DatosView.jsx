@@ -6,8 +6,17 @@ import { TextField } from "@material-ui/core";
 import imgDatos from "../imgDatos.png";
 
 //import { Button } from "@material-ui/core";
-import Dropdown from "react-dropdown";
-import "react-dropdown/style.css";
+//import Dropdown from "react-dropdown";
+//import "react-dropdown/style.css";
+
+import { makeStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
 
 import {
   Button,
@@ -23,29 +32,19 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PersonIcon from "@material-ui/icons/Person";
 
-const ocupacion = [
-  "Profesionista",
-  "Comerciante",
-  "Ama de casa",
-  "Deportista",
-  "Campesino",
-  "Chofer",
-  "Servidor público",
-  "Estudiante",
-  "Otro(s)",
-];
+// const ocupacion = [
+//   "Profesionista",
+//   "Comerciante",
+//   "Ama de casa",
+//   "Deportista",
+//   "Campesino",
+//   "Chofer",
+//   "Servidor público",
+//   "Estudiante",
+//   "Otro(s)",
+// ];
 
 class DatosView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      edit: false,
-      idPaciente: 0,
-      pacientes: [],
-    }
-  }
-  state = {};
-
   titulo = "DATOS DE MIS PACIENTES:";
 
   frmNombre = React.createRef();
@@ -55,24 +54,49 @@ class DatosView extends Component {
   frmTelefono = React.createRef();
   frmFechaNacimiento = React.createRef();
 
-  addPaciente = (event) => {
+
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: "Paciente1",
+      edit: false,
+      idPaciente: 0,
+      pacientes: [],
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({ value: event.target.value });
+  }
+
+  handleSubmit(event) {
+    alert("Your favorite flavor is: " + this.state.value);
     event.preventDefault();
+  }
+
+  addPaciente = event => {
+    event.preventDefault();
+
+    //const url = 'http://localhost:5000/api/pacientes';
+
+    console.log("Sí entra");
 
     const data = {
       nombre: this.frmNombre.value,
       aPaterno: this.frmApaterno.value,
       aMaterno: this.frmAmaterno.value,
       email: this.frmEmail.value,
-      tel: this.frmTelefono.value,
-      fecha: this.frmFechaNacimiento.value,
+      telefono: this.frmTelefono.value,
+      fechaNacimiento: this.frmFechaNacimiento.value,
     }
 
     if (!this.state.edit) {
-
-      const url = "http://localhost:3000/api/pacientes";
-
-      axios.post(url, data).then((res) => console.log(res.data));
-
+      const url = "http://localhost:5000/api/pacientes/";
+      axios.post(url, data).then(res => console.log(res.data));
       this.frmNombre.value = "";
       this.frmApaterno.value = "";
       this.frmAmaterno.value = "";
@@ -88,24 +112,20 @@ class DatosView extends Component {
       this.frmFechaNacimiento.focus();
     } else {
       const url = "http://localhost:5000/api/pacientes/" + this.state.id;
-
       const data = {
         nombre: this.frmNombre.value,
         aPaterno: this.frmApaterno.value,
         aMaterno: this.frmAmaterno.value,
         email: this.frmEmail.value,
-        tel: this.frmTelefono.value,
-        fecha: this.frmFechaNacimiento.value,
+        telefono: this.frmTelefono.value,
+        fechaNacimiento: this.frmFechaNacimiento.value,
       }
-
-      axios.put(url, data).then((res) => console.log(res.data));
-
+      axios.put(url, data).then(res => console.log(res.data));
     }
-
     this.loadPaciente();
   }
 
-  viewPaciente = (id) => (event) => {
+  viewPaciente = (id) => event => {
     event.preventDefault();
 
     this.frmNombre.value = "";
@@ -128,43 +148,45 @@ class DatosView extends Component {
     this.frmFechaNacimiento.value = this.state.pacientes[id];
   }
 
-  editPaciente = (id, row) => (event) => {
+  editPaciente = (id, row) => event => {
     event.preventDefault();
-
     var newState = this.state;
     newState.edit = true;
     newState.id = id;
-
     this.setState(newState);
 
     this.frmNombre.focus();
+    this.frmNombre.value = "";
     this.frmNombre.value = this.state.pacientes[row].nombre;
     this.frmApaterno.focus();
+    this.frmApaterno.value = "";
     this.frmApaterno.value = this.state.pacientes[row].aPaterno;
     this.frmAmaterno.focus();
+    this.frmAmaterno.value = "";
     this.frmAmaterno.value = this.state.pacientes[row].aMaterno;
     this.frmEmail.focus();
+    this.frmEmail.value = "";
     this.frmEmail.value = this.state.pacientes[row].email;
     this.frmTelefono.focus();
-    this.frmTelefono.value = this.state.pacientes[row].tel;
+    this.frmTelefono.value = "";
+    this.frmTelefono.value = this.state.pacientes[row].telefono;
     this.frmFechaNacimiento.focus();
-    this.frmFechaNacimiento.value = this.state.pacientes[row].fecha;
+    this.frmFechaNacimiento.value = "";
+    this.frmFechaNacimiento.value = this.state.pacientes[row].fechaNacimiento;
+    this.loadPaciente();
   }
 
-  deletePaciente = (id) => (event) => {
+  deletePaciente = (id) => event => {
     event.preventDefault();
-
     const url = "http://localhost:5000/api/pacientes/" + id;
-
-    axios.delete(url).then((res) => console.log(res.data));
-
+    axios.delete(url).then(res => console.log(res.data));
     this.loadPaciente();
   }
 
   loadPaciente() {
-    axios.get("http://localhost:5000/api/pacientes").then((res) => {
+    axios.get("http://localhost:5000/api/pacientes/").then(res => {
       this.setState({ pacientes: res.data });
-    })
+    });
   }
 
   componentDidMount() {
@@ -194,7 +216,8 @@ class DatosView extends Component {
               <td>
                 <tr>
                   <TextField
-                    label="Nombre(s)"
+                    label=""
+                    placeholder="Nombre(s)"
                     type="text"
                     margin="normal"
                     variant="outlined"
@@ -203,7 +226,8 @@ class DatosView extends Component {
                 </tr>
                 <tr>
                   <TextField
-                    label="Apellido paterno"
+                    label=""
+                    placeholder="Apellido paterno"
                     type="text"
                     margin="normal"
                     variant="outlined"
@@ -212,7 +236,8 @@ class DatosView extends Component {
                 </tr>
                 <tr>
                   <TextField
-                    label="Apellido materno"
+                    label=""
+                    placeholder="Apellido materno"
                     type="text"
                     margin="normal"
                     variant="outlined"
@@ -221,27 +246,27 @@ class DatosView extends Component {
                 </tr>
                 <tr>
                   <TextField
-                    label="Correo electrónico"
-                    type="text"
+                    label=""
+                    placeholder="Correo electrónico"
+                    type="email"
                     margin="normal"
                     variant="outlined"
                     inputRef={(e) => (this.frmEmail = e)}
                   />
                 </tr>
-                <div>
                   <TextField
-                    label="Número telefónico"
-                    type="text"
+                    label=""
+                    placeholder="Número telefónico"
+                    type="numeric"
                     margin="normal"
                     variant="outlined"
                     inputRef={(e) => (this.frmTelefono = e)}
                   />
-                </div>
                 <tr>
                   <TextField
-                    paceholder=""
-                    label="Fecha de nacimiento"
-                    type="text"
+                    label=""
+                    placeholder="Fecha de nacimiento"
+                    type="date"
                     margin="normal"
                     variant="outlined"
                     inputRef={(e) => (this.frmFechaNacimiento = e)}
@@ -250,7 +275,7 @@ class DatosView extends Component {
               </td>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <td>
-                <h8>Ocupación:</h8>
+                {/* <h8>Ocupación:</h8>
                 <Dropdown
                   options={ocupacion}
                   getOptionLabel={(option) => option.title}
@@ -264,7 +289,7 @@ class DatosView extends Component {
                       //onChange={this.handleChange}
                     />
                   )}
-                />
+                />  */}
                 <tr>
                   <img src={imgDatos} className="App-logo" alt="imgDatos" />
                 </tr>
@@ -287,7 +312,7 @@ class DatosView extends Component {
             </tr>
           </table>
 
-          <List
+          {/* <List
             component="nav"
             subheader={
               <ListSubheader component="div">{this.titulo}</ListSubheader>
@@ -302,9 +327,9 @@ class DatosView extends Component {
                 <ListItemText inset primary={paciente.aPaterno} />
                 <ListItemText inset primary={paciente.aMaterno} />
                 <ListItemText inset primary={paciente.email} />
-                <ListItemText inset primary={paciente.tel} />
-                <ListItemText inset primary={paciente.fecha} />
-                <ListItemIcon onClick={this.editPaciente(paciente.id,index)}>
+                <ListItemText inset primary={paciente.telefono} />
+                <ListItemText inset primary={paciente.fechaNacimiento} />
+                <ListItemIcon onClick={this.editPaciente(paciente.id, index)}>
                   <EditIcon />
                 </ListItemIcon>
                 <ListItemIcon onClick={this.deletePaciente(paciente.id)}>
@@ -312,7 +337,56 @@ class DatosView extends Component {
                 </ListItemIcon>
               </ListItem>
             ))}
-          </List>
+          </List> */}
+
+<TableContainer component={Paper}>
+            <Table className={"Table"} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Nombre(s)</TableCell>
+                  <TableCell align="center">Apellido paterno</TableCell>
+                  <TableCell align="center">Apellido materno</TableCell>
+                  <TableCell align="center">Correo electrónico</TableCell>
+                  <TableCell align="center">Número telefónico</TableCell>
+                  <TableCell align="center">Fecha de nacimiento</TableCell>
+                  <TableCell align="center">Acciones</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {this.state.pacientes.map((paciente, index) => (
+                  <TableRow key={paciente.name}>
+                    <ListItemIcon onClick={this.viewPaciente(index)}>
+                      <TableCell align="center">
+                        <PersonIcon />
+                      </TableCell>
+                    </ListItemIcon>
+
+                    {/* <TableCell component="th" scope="row">
+                      {evaluacion.name}
+                    </TableCell>  */}
+
+                    <TableCell align="center">{paciente.nombre}</TableCell>
+                    <TableCell align="center">{paciente.aPaterno}</TableCell>
+                    <TableCell align="center">{paciente.aMaterno}</TableCell>
+                    <TableCell align="center">{paciente.email}</TableCell>
+                    <TableCell align="center">{paciente.telefono}</TableCell>
+                    <TableCell align="center">{paciente.fechaNacimiento}</TableCell>
+                    <ListItemIcon
+                      onClick={this.editPaciente(paciente.id, index)}
+                    >
+                      <EditIcon />
+                    </ListItemIcon>
+                    <ListItemIcon
+                      onClick={this.deletePaciente(paciente.id)}
+                    >
+                      <DeleteIcon />
+                    </ListItemIcon>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
         </form>
       </div>
     );

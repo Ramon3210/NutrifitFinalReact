@@ -1,109 +1,193 @@
 import React, { Component } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
-import { Button } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
 import { TextField } from "@material-ui/core";
 import imgEvaluacion from "../imgEvaluacion.jpg";
 import medidas from "../medidas.png";
 
+//import { Button } from "@material-ui/core";
+import Dropdown from "react-dropdown";
+import "react-dropdown/style.css";
 
-// import { makeStyles } from "@material-ui/core/styles";
-// import Typography from "@material-ui/core/Typography";
-// import Slider from "@material-ui/core/Slider";
+import { makeStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
 
-// const useStyles = makeStyles((theme) => ({
-//   root: {
-//     width: 300,
+import {
+  Button,
+  List,
+  ListItem,
+  ListSubheader,
+  TableItemIcon,
+  ListItemText,
+  ListItemIcon,
+} from "@material-ui/core";
+
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import PersonIcon from "@material-ui/icons/Person";
+
+const complexion = ["Ectomorfo", "Mesomorfo", "Endomorfo"];
+
+// const useStyles = makeStyles({
+//   table: {
+//     minWidth: 650,
 //   },
-//   margin: {
-//     height: theme.spacing(3),
-//   },
-// }));
+// });
 
-// const marks = [
-//   {
-//     value: 0,
-//     label: "0°C",
-//   },
-//   {
-//     value: 20,
-//     label: "20°C",
-//   },
-//   {
-//     value: 37,
-//     label: "37°C",
-//   },
-//   {
-//     value: 100,
-//     label: "100°C",
-//   },
-// ];
+const inputProps = {
+  disabled: true,
+};
 
-// function valuetext(value) {
-//   return `${value}°C`;
-// }
-
-// const classes = useStyles();
-
-// import Radio from "@material-ui/core/Radio";
-// import RadioGroup from "@material-ui/core/RadioGroup";
-// import FormControlLabel from "@material-ui/core/FormControlLabel";
-// import FormControl from "@material-ui/core/FormControl";
-// import FormLabel from "@material-ui/core/FormLabel";
-
-// export default function RadioButtonsGroup() {
-//   const [value, setValue] = React.useState("female");
-
-//   const handleChange = (event) => {
-//     setValue(event.target.value);
-//   };
-
-//   return (
-//     <FormControl component="fieldset">
-//       <FormLabel component="legend">Gender</FormLabel>
-//       <RadioGroup
-//         aria-label="gender"
-//         name="gender1"
-//         value={value}
-//         onChange={handleChange}
-//       >
-//         <FormControlLabel value="female" control={<Radio />} label="Female" />
-//         <FormControlLabel value="male" control={<Radio />} label="Male" />
-//         <FormControlLabel value="other" control={<Radio />} label="Other" />
-//         <FormControlLabel
-//           value="disabled"
-//           disabled
-//           control={<Radio />}
-//           label="(Disabled option)"
-//         />
-//       </RadioGroup>
-//     </FormControl>
-//   );
-// }
+//const classes = useStyles();
 
 class EvaluacionView extends Component {
-  constructor() {
-    super();
-    this.state = { value: "" };
-    this.onChange = this.onChange.bind(this);
+  titulo = "EVALUACIÓN DE MIS PACIENTES:";
+
+  frmEstatura = React.createRef();
+  frmPeso = React.createRef();
+  frmEdad = React.createRef();
+  frmPorcentajeGrasa = React.createRef();
+  frmComplexion = React.createRef();
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: "Complexión",
+      edit: false,
+      idEvaluacion: 0,
+      evaluaciones: [],
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  addData(event) {
-    console.log("Agregar datos");
+  handleChange(event) {
+    this.setState({ selectValue: event.target.value });
+  }
+
+  handleSubmit(event) {
+    alert("Your favorite flavor is: " + this.state.value);
     event.preventDefault();
-    console.log(this);
   }
 
-  onChange(e) {
-    const re = /^[0-9\b]+$/;
-    if (e.target.value === "" || re.test(e.target.value)) {
-      this.setState({ value: e.target.value });
-    }
+  addEvaluacion = (event) => {
+    event.preventDefault();
 
-    if (e.target.value > 120) {
-      alert("Eres una jirafa, ¿mides " + e.target.value + "? :o");
-      this.setState({ value: "" });
+    //const url = 'http://localhost:5000/api/pacientes';
+
+    console.log("Sí entra");
+
+    const data = {
+      estatura: this.frmEstatura.value,
+      peso: this.frmPeso.value,
+      edad: this.frmEdad.value,
+      porcentajeGrasa: this.frmPorcentajeGrasa.value,
+      complexion: this.frmComplexion.value,
+    };
+
+    if (!this.state.edit) {
+      const url = "http://localhost:5000/api/evaluaciones/";
+      axios.post(url, data).then((res) => console.log(res.data));
+
+      this.frmEstatura.value = "";
+      this.frmPeso.value = "";
+      this.frmEdad.value = "";
+      this.frmPorcentajeGrasa.value = "";
+      this.frmComplexion.value = "";
+
+      this.frmEstatura.focus();
+      this.frmPeso.focus();
+      this.frmEdad.focus();
+      this.frmPorcentajeGrasa.focus();
+      this.frmComplexion.focus();
+    } else {
+      const url = "http://localhost:5000/api/evaluaciones/" + this.state.id;
+
+      const data = {
+        estatura: this.frmEstatura.value,
+        peso: this.frmPeso.value,
+        edad: this.frmEdad.value,
+        porcentajeGrasa: this.frmPorcentajeGrasa.value,
+        complexion: this.frmComplexion.value,
+      };
+
+      axios.put(url, data).then((res) => console.log(res.data));
     }
+    this.loadEvaluacion();
+  };
+
+  viewEvaluacion = (id) => (event) => {
+    event.preventDefault();
+
+    this.frmEstatura.value = "";
+    this.frmPeso.value = "";
+    this.frmEdad.value = "";
+    this.frmPorcentajeGrasa.value = "";
+    this.frmComplexion.value = "";
+
+    this.frmEstatura.focus();
+    this.frmPeso.focus();
+    this.frmEdad.focus();
+    this.frmPorcentajeGrasa.focus();
+    this.frmComplexion.focus();
+
+    this.frmEstatura.value = this.state.evaluaciones[id];
+    this.frmPeso.value = this.state.evaluaciones[id];
+    this.frmEdad.value = this.state.evaluaciones[id];
+    this.frmPorcentajeGrasa.value = this.state.evaluaciones[id];
+    this.frmComplexion.value = this.state.evaluaciones[id];
+  };
+
+  editEvaluacion = (id, row) => (event) => {
+    event.preventDefault();
+    var newState = this.state;
+    newState.edit = true;
+    newState.id = id;
+    this.setState(newState);
+
+    this.frmEstatura.focus();
+    this.frmEstatura.value = "";
+    this.frmEstatura.value = this.state.evaluaciones[row].estatura;
+    this.frmPeso.focus();
+    this.frmPeso.value = "";
+    this.frmPeso.value = this.state.evaluaciones[row].peso;
+    this.frmEdad.focus();
+    this.frmEdad.value = "";
+    this.frmEdad.value = this.state.evaluaciones[row].edad;
+    this.frmPorcentajeGrasa.focus();
+    this.frmPorcentajeGrasa.value = "";
+    this.frmPorcentajeGrasa.value = this.state.evaluaciones[
+      row
+    ].porcentajeGrasa;
+    this.frmComplexion.focus();
+    this.frmComplexion.value = "";
+    this.frmComplexion.value = this.state.evaluaciones[row].complexion;
+    this.loadEvaluacion();
+  };
+
+  deleteEvaluacion = (id) => (event) => {
+    event.preventDefault();
+    const url = "http://localhost:5000/api/evaluaciones/" + id;
+    axios.delete(url).then((res) => console.log(res.data));
+    this.loadEvaluacion();
+  };
+
+  loadEvaluacion() {
+    axios.get("http://localhost:5000/api/evaluaciones/").then((res) => {
+      this.setState({ evaluaciones: res.data });
+    });
+  }
+
+  componentDidMount() {
+    this.loadEvaluacion();
   }
 
   render() {
@@ -120,64 +204,93 @@ class EvaluacionView extends Component {
           </Button>
         </Link>
         <h1>{this.props.name}</h1>
-        <form autoComplete="off" onSubmit={this.addData}>
+        <form autoComplete="off" onSubmit={this.addEvaluacion}>
           <table>
             <tr>
               <td>
                 <tr>
                   <TextField
-                    label="Estatura(cm)"
+                    label=""
+                    placeholder="Estatura(cm)"
                     type="numeric"
                     keyboardType="numeric"
-                    onChange={(e) => this.onChange(e)}
+                    //onChange={(e) => this.onChange(e)}
                     margin="normal"
                     variant="outlined"
+                    inputRef={(e) => (this.frmEstatura = e)}
                   />
                 </tr>
                 <tr>
                   <TextField
-                    label="Peso(gr)"
+                    label=""
+                    placeholder="Peso(gr)"
                     type="numeric"
                     keyboardType="numeric"
-                    onChange={(e) => this.onCambios(e)}
+                    //onChange={(e) => this.onCambios(e)}
                     margin="normal"
                     variant="outlined"
+                    inputRef={(e) => (this.frmPeso = e)}
                   />
                 </tr>
                 <tr></tr>
                 <tr>
                   <TextField
-                    label="Edad"
+                    label=""
+                    placeholder="Edad"
                     keyboardType="numeric"
-                    onChange={(e) => this.onChange(e)}
-                    input
-                    value={this.state.value}
+                    //onChange={(e) => this.onChange(e)}
+                    //input
+                    //value={this.state.value}
                     margin="normal"
                     variant="outlined"
+                    inputRef={(e) => (this.frmEdad = e)}
                   />
                 </tr>
                 <tr>
                   <TextField
-                    label="Grasa(%)"
+                    label=""
+                    placeholder="Grasa(%)"
                     keyboardType="numeric"
-                    onChange={(e) => this.onChange(e)}
-                    input
-                    value={this.state.value}
+                    //onChange={(e) => this.onChange(e)}
+                    //input
+                    //value={this.state.value}
                     margin="normal"
                     variant="outlined"
+                    inputRef={(e) => (this.frmPorcentajeGrasa = e)}
                   />
                 </tr>
                 <tr>
                   <TextField
-                    label="Complexión"
+                    label=""
+                    placeholder="Complexión"
                     type="text"
                     margin="normal"
                     variant="outlined"
+                    value={this.frmComplexion.value}
+                    inputRef={(e) => (this.frmComplexion = e)}
+                    inputProps={inputProps}
                   />
                 </tr>
               </td>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <td>
+                {/* <h8>Complexión:</h8> */}
+                <Dropdown
+                  options={complexion}
+                  getOptionLabel={(option) => option.title}
+                  style={{ width: 150 }}
+                  value={this.frmComplexion.value}
+                  // onChange={this.handleChange}
+                  // inputRef ={e=>(this.frmComplexion=e)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Combo box"
+                      variant="outlined"
+                    />
+                  )}
+                />
+
                 <tr>
                   <img
                     src={imgEvaluacion}
@@ -185,34 +298,109 @@ class EvaluacionView extends Component {
                     alt="imgEvaluacion"
                   />
                 </tr>
+                <tr>
+                  <Link to="/">
+                    <Button
+                      className="css-ButtonSave"
+                      variant="contained"
+                      color="default"
+                      size="bigger"
+                      onClick={this.addEvaluacion}
+                    >
+                      Guardar evaluación del paciente
+                    </Button>
+                  </Link>
+                </tr>
               </td>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <td>
-                {/* <tr>
-                  <div className={classes.root}>
-                    <Typography id="discrete-slider-always" gutterBottom>
-                      Always visible
-                    </Typography>
-                    <Slider
-                      defaultValue={80}
-                      getAriaValueText={valuetext}
-                      aria-labelledby="discrete-slider-always"
-                      step={10}
-                      marks={marks}
-                      valueLabelDisplay="on"
-                    />
-                  </div>
-                </tr> */}
                 <tr>
-                <img
-                    src={medidas}
-                    className="App-logo"
-                    alt="medidas"
-                  />                    
+                  <img src={medidas} className="App-logo" alt="medidas" />
                 </tr>
               </td>
             </tr>
           </table>
+          {/* <List
+            component="nav"
+            subheader={
+              <ListSubheader component="div">{this.titulo}</ListSubheader>
+            }
+          >
+            {this.state.evaluaciones.map((evaluacion, index) => (
+              <ListItem button key={index}>
+                <ListItemIcon onClick={this.viewEvaluacion(index)}>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText inset primary={evaluacion.estatura} />
+                <ListItemText inset primary={evaluacion.peso} />
+                <ListItemText inset primary={evaluacion.edad} />
+                <ListItemText inset primary={evaluacion.porcentajeGrasa} />
+                <ListItemText inset primary={evaluacion.complexion} />
+                <ListItemIcon
+                  onClick={this.editEvaluacion(evaluacion.id, index)}
+                >
+                  <EditIcon />
+                </ListItemIcon>
+                <ListItemIcon onClick={this.deleteEvaluacion(evaluacion.id)}>
+                  <DeleteIcon />
+                </ListItemIcon>
+              </ListItem>
+            ))}
+          </List> */}
+
+          <TableContainer component={Paper}>
+            <Table className={"Table"} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Paciente</TableCell>
+                  <TableCell align="center">Estatura(cm)</TableCell>
+                  <TableCell align="center">Peso(gr)</TableCell>
+                  <TableCell align="center">Edad</TableCell>
+                  <TableCell align="center">Grasa&nbsp;(%)</TableCell>
+                  <TableCell align="center">Complexión</TableCell>
+                  <TableCell align="center">Acciones</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {this.state.evaluaciones.map((evaluacion, index) => (
+                  <TableRow key={evaluacion.name}>
+                    <ListItemIcon onClick={this.viewEvaluacion(index)}>
+                      <TableCell align="center">
+                        <PersonIcon />
+                      </TableCell>
+                    </ListItemIcon>
+
+                    {/* <TableCell component="th" scope="row">
+                      {evaluacion.name}
+                    </TableCell>  */}
+
+                    <TableCell align="center" color="green">
+                      {evaluacion.estatura}
+                    </TableCell>
+                    <TableCell align="center">{evaluacion.peso}</TableCell>
+                    <TableCell align="center">{evaluacion.edad}</TableCell>
+                    <TableCell align="center">
+                      {evaluacion.porcentajeGrasa}
+                    </TableCell>
+                    <TableCell align="center">
+                      {evaluacion.complexion}
+                    </TableCell>
+
+                    <ListItemIcon
+                      onClick={this.editEvaluacion(evaluacion.id, index)}
+                    >
+                      <EditIcon />
+                    </ListItemIcon>
+                    <ListItemIcon
+                      onClick={this.deleteEvaluacion(evaluacion.id)}
+                    >
+                      <DeleteIcon />
+                    </ListItemIcon>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </form>
       </div>
     );
