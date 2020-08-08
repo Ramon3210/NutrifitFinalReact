@@ -81,7 +81,7 @@ class EvaluacionView extends Component {
   addEvaluacion = (event) => {
     event.preventDefault();
 
-    //const url = 'http://localhost:5000/api/pacientes';
+    //const url = 'https://loop-back-app.mybluemix.net/api/pacientes';
 
     console.log("Sí entra");
 
@@ -94,7 +94,7 @@ class EvaluacionView extends Component {
     };
 
     if (!this.state.edit) {
-      const url = "http://localhost:5000/api/evaluaciones/";
+      const url = "https://loop-back-app.mybluemix.net/api/evaluaciones/";
       axios.post(url, data).then((res) => console.log(res.data));
 
       this.frmEstatura.value = "";
@@ -109,7 +109,7 @@ class EvaluacionView extends Component {
       this.frmPorcentajeGrasa.focus();
       this.frmComplexion.focus();
     } else {
-      const url = "http://localhost:5000/api/evaluaciones/" + this.state.id;
+      const url = "https://loop-back-app.mybluemix.net/api/evaluaciones/" + this.state.id;
 
       const data = {
         estatura: this.frmEstatura.value,
@@ -175,13 +175,13 @@ class EvaluacionView extends Component {
 
   deleteEvaluacion = (id) => (event) => {
     event.preventDefault();
-    const url = "http://localhost:5000/api/evaluaciones/" + id;
+    const url = "https://loop-back-app.mybluemix.net/api/evaluaciones/" + id;
     axios.delete(url).then((res) => console.log(res.data));
     this.loadEvaluacion();
   };
 
   loadEvaluacion() {
-    axios.get("http://localhost:5000/api/evaluaciones/").then((res) => {
+    axios.get("https://loop-back-app.mybluemix.net/api/evaluaciones/").then((res) => {
       this.setState({ evaluaciones: res.data });
     });
   }

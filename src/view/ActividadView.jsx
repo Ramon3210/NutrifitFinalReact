@@ -66,7 +66,7 @@ class ActividadView extends Component {
   addActividad = event => {
     event.preventDefault();
 
-    //const url = 'http://localhost:5000/api/pacientes';
+    //const url = 'https://loop-back-app.mybluemix.net/api/pacientes';
 
     console.log("Sí entra");
 
@@ -79,7 +79,7 @@ class ActividadView extends Component {
     }
 
     if (!this.state.edit) {
-      const url = "http://localhost:5000/api/actividades/";
+      const url = "https://loop-back-app.mybluemix.net/api/actividades/";
       axios.post(url, data).then(res => console.log(res.data));
 
       this.frmEnELTrabajo.value = "";
@@ -94,7 +94,7 @@ class ActividadView extends Component {
       this.frmEnCasa.focus();
       this.frmOtraActividad.focus();
     } else {
-      const url = "http://localhost:5000/api/actividades/" + this.state.id;
+      const url = "https://loop-back-app.mybluemix.net/api/actividades/" + this.state.id;
 
       const data = {
         enElTrabajo: this.frmEnELTrabajo.value,
@@ -161,13 +161,13 @@ class ActividadView extends Component {
 
   deleteActividad = (id) => event => {
     event.preventDefault();
-    const url = "http://localhost:5000/api/actividades/" + id;
+    const url = "https://loop-back-app.mybluemix.net/api/actividades/" + id;
     axios.delete(url).then(res => console.log(res.data));
     this.loadComida();
   }
 
   loadActividad() {
-    axios.get("http://localhost:5000/api/actividades/").then(res => {
+    axios.get("https://loop-back-app.mybluemix.net/api/actividades/").then(res => {
       this.setState({ actividades: res.data });
     });
   }

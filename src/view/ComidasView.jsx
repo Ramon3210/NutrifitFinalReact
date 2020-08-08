@@ -79,7 +79,7 @@ class ComidasView extends Component {
   addComida = (event) => {
     event.preventDefault();
 
-    //const url = 'http://localhost:5000/api/pacientes';
+    //const url = 'https://loop-back-app.mybluemix.net/api/pacientes';
 
     console.log("Sí entra");
 
@@ -94,7 +94,7 @@ class ComidasView extends Component {
     };
 
     if (!this.state.edit) {
-      const url = "http://localhost:5000/api/comidas/";
+      const url = "https://loop-back-app.mybluemix.net/api/comidas/";
       axios.post(url, data).then((res) => console.log(res.data));
 
       this.frmLitrosAguaDiario.value = "";
@@ -113,7 +113,7 @@ class ComidasView extends Component {
       this.frmCena.focus();
       this.frmTe.focus();
     } else {
-      const url = "http://localhost:5000/api/comidas/" + this.state.id;
+      const url = "https://loop-back-app.mybluemix.net/api/comidas/" + this.state.id;
 
       const data = {
         litrosAguaDiario: this.frmLitrosAguaDiario.value,
@@ -194,13 +194,13 @@ class ComidasView extends Component {
 
   deleteComida = (id) => (event) => {
     event.preventDefault();
-    const url = "http://localhost:5000/api/comidas/" + id;
+    const url = "https://loop-back-app.mybluemix.net/api/comidas/" + id;
     axios.delete(url).then((res) => console.log(res.data));
     this.loadComida();
   };
 
   loadComida() {
-    axios.get("http://localhost:5000/api/comidas/").then((res) => {
+    axios.get("https://loop-back-app.mybluemix.net/api/comidas/").then((res) => {
       this.setState({ comidas: res.data });
     });
   }

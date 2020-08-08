@@ -81,7 +81,7 @@ class DatosView extends Component {
   addPaciente = event => {
     event.preventDefault();
 
-    //const url = 'http://localhost:5000/api/pacientes';
+    //const url = 'https://loop-back-app.mybluemix.net/api/pacientes';
 
     console.log("Sí entra");
 
@@ -95,7 +95,7 @@ class DatosView extends Component {
     }
 
     if (!this.state.edit) {
-      const url = "http://localhost:5000/api/pacientes/";
+      const url = "https://loop-back-app.mybluemix.net/api/pacientes/";
       axios.post(url, data).then(res => console.log(res.data));
       this.frmNombre.value = "";
       this.frmApaterno.value = "";
@@ -111,7 +111,7 @@ class DatosView extends Component {
       this.frmTelefono.focus();
       this.frmFechaNacimiento.focus();
     } else {
-      const url = "http://localhost:5000/api/pacientes/" + this.state.id;
+      const url = "https://loop-back-app.mybluemix.net/api/pacientes/" + this.state.id;
       const data = {
         nombre: this.frmNombre.value,
         aPaterno: this.frmApaterno.value,
@@ -178,13 +178,13 @@ class DatosView extends Component {
 
   deletePaciente = (id) => event => {
     event.preventDefault();
-    const url = "http://localhost:5000/api/pacientes/" + id;
+    const url = "https://loop-back-app.mybluemix.net/api/pacientes/" + id;
     axios.delete(url).then(res => console.log(res.data));
     this.loadPaciente();
   }
 
   loadPaciente() {
-    axios.get("http://localhost:5000/api/pacientes/").then(res => {
+    axios.get("https://loop-back-app.mybluemix.net/api/pacientes/").then(res => {
       this.setState({ pacientes: res.data });
     });
   }
